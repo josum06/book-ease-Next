@@ -10,8 +10,8 @@ const josefin = Josefin_Sans({
 export const metadata = {
   // title:"The book-ease",
   title:{
-    template: "%s The Wild Oasis",
-    default:"Welcome / The Wild Oasis"
+    template: "%s The Book Ease",
+    default:"Welcome / The Book Ease"
   },
   description: "Luxurious cabin hotel located in heart of Italian Dolomites surrounded by dark forests"
 };

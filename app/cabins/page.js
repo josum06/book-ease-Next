@@ -2,10 +2,13 @@ import { Suspense } from "react";
 import CabinList from "../_components/CabinList";
 import Spinner from "../_components/Spinner";
 
+export const revalidate = 15; // made it dynamic 
 
 export const metadata={
   title :"Cabins",
 }
+
+
 export default async function Page() {
 
   return (
