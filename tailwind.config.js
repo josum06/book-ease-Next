@@ -35,7 +35,11 @@ module.exports = {
           950: '#382814',
         },
       },
+      fontFamily: {
+        josefin: ["Josefin Sans", "sans-serif"], // Add this line
+      },
     },
+    
   },
   plugins: [],
 };

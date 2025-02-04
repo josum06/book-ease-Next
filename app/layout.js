@@ -7,6 +7,8 @@ const josefin = Josefin_Sans({
   display: "swap",
 });
 
+console.log("classname is:---?",josefin.className);
+
 export const metadata = {
   // title:"The book-ease",
   title:{
@@ -21,13 +23,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={`${josefin.className}
-       antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col relative`}>
+     <body className="font-josefin antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col relative">
         
         <Header />
         <div className="flex-1 px-8 py-12 grid">
           <main className="max-w-7xl mx-auto w-full">
             {children}
+
           </main>
         </div>
       </body>

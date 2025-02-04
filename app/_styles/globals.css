@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,10 +32,7 @@
   }
 }
 
-/* For data picker */
-.rdp {
-  --rdp-cell-size: 32px !important;
-  --rdp-accent-color: theme('colors.accent.500') !important;
-  --rdp-background-color: theme('colors.accent.600') !important;
-  margin: 0 !important;
-} 
+/* ✅ Ensure body font-family is applied globally */
+body {
+  font-family: 'Josefin Sans', sans-serif !important;
+}
