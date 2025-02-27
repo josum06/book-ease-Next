@@ -1,13 +1,23 @@
-function ReservationForm({cabin}) {
+"use client"
+import { differenceInDays } from "date-fns";
+import { useReservation } from "./ReservationContext";
+import { createBooking } from "../_lib/actions";
+
+async function ReservationForm({cabin,user}) {
   // CHANGE
-  const {maxCapacity} = cabin;
+  const { range, resetRange } = useReservation();
+  const {maxCapacity,regularPrice,discount} = cabin;
+  const startDate = range.from;
+  const endDate = range.to;
+  const numNights = differenceInDays(startDate,endDate);
+  const cabinPrice = numNights *(regularPrice - discount);
 
   return (
     <div className='scale-[1.01]'>
       <div className='bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center'>
         <p>Logged in as</p>
 
-        {/* <div className='flex gap-4 items-center'>
+        <div className='flex gap-4 items-center'>
           <img
             // Important to display google profile images
             referrerPolicy='no-referrer'
@@ -16,10 +26,11 @@ function ReservationForm({cabin}) {
             alt={user.name}
           />
           <p>{user.name}</p>
-        </div> */}
+        </div>
       </div>
 
-      <form className='bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col'>
+      <form action={createBooking}
+        className='bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col'>
         <div className='space-y-2'>
           <label htmlFor='numGuests'>How many guests?</label>
           <select
@@ -28,7 +39,7 @@ function ReservationForm({cabin}) {
             className='px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm'
             required
           >
-            <option value='' key=''>
+            <option value="" key="">
               Select number of guests...
             </option>
             {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (

@@ -1,7 +1,10 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth"
 import { supabase } from "./supabase";
+import { getBookings } from "./data-service";
+import { redirect } from "next/navigation";
 
 export async function updateGuest(formData){
   
@@ -25,11 +28,83 @@ export async function updateGuest(formData){
   if (error) {
     throw new Error("Guest could not be updated");
   }
-  return data;
 
+  revalidatePath('/account/profile')
+}
+export async function createBooking(formData){
+    console.log(formData);
 }
 
+export async function deleteBooking(bookingId){
+  await new Promise((res)=> setTimeout(res,2000));
 
+  
+  const session = await auth();
+  if(!session) throw new Error("You must be logged in");
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if(!guestBookingIds.includes(bookingId)){
+    throw new Error("You are not allowed to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity
+
+  }
+  
+  const { error } = await supabase.from("bookings").delete().eq("id", bookingId);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be deleted");
+  }
+   
+  revalidatePath('/account/reservations')
+};
+
+export async function updateBooking(formData){
+  const bookingId = Number(formData.get('bookingId'))
+ 
+  // 1. Authentication 
+  const session = await auth();
+  if(!session) throw new Error("You must be logged in");
+ 
+  // 2. Authorization
+
+  const guestBookings = await getBookings(session.user.guestId);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
+
+  if(!guestBookingIds.includes(bookingId))
+    throw new Error("You are not allowed to update this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity, let's just throw an error here.  // throw new Error("You are not authorized to delete this booking");  // Or redirect to a different page. For simplicity
+
+  
+  // 3. Building update data
+  const updateData = {
+    numGuests: Number(formData.get('numGuests')),
+    observations : formData.get('observations').slice(0,1000),
+
+  }
+   
+
+  // 4. Mutation 
+  const { error } = await supabase
+    .from("bookings")
+    .update(updateData)
+    .eq("id", bookingId)
+    .select()
+    .single();
+  
+  // 5. Error Handling
+  if (error) {
+    throw new Error("Booking could not be updated");
+  } 
+   
+  // 6. Revalidation
+  revalidatePath(`/account/reservations/edit/${bookingId}`)
+  revalidatePath('/account/reservations');
+
+  // 7. Redirecting
+   redirect('/account/reservations')
+
+}
 export async function signInAction() {
   await signIn("google",{redirectTo:"/account"})
 }
