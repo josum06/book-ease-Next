@@ -10,7 +10,6 @@ export async function GET(request, { params }) {
     ]);
     return Response.json({ cabin, bookedDates });
   } catch (error) {
-    console.error(error);
     return Response.status(500).json({ error: "Server Error" });
   }
 }
